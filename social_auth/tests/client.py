@@ -37,7 +37,7 @@ class SocialClient(Client):
 
     @patch('social_auth.backends.facebook.FacebookAuth.enabled')
     @patch('social_auth.utils.urlopen')
-    def login(self, user, mock_urlopen, mock_facebook_enabled, backend='facebook'):
+    def login(self, user, mock_urlopen, mock_facebook_enabled, backend='facebook', session_user=None):
         """
         Login or Register a facebook user.
 
@@ -92,29 +92,14 @@ class SocialClient(Client):
                 simplejson.dumps(user),
             ),
 
-            'linkedin': (
-                urllib.urlencode({
-                    'oauth_token': token,
-                    'oauth_token_secret': token,
-                    'oauth_callback_confirmed': 'true',
-                    'xoauth_request_auth_url': (
-                        'https://api.linkedin.com/uas/oauth/authorize'),
-                    'oauth_expires_in': 3600,
+            'linkedin-oauth2': (
+                simplejson.dumps({
+                    'access_token': token,
+                    'expires': 3600,
                 }),
-                urllib.urlencode({
-                    'oauth_token': token,
-                    'oauth_token_secret': token,
-                    'oauth_expires_in': 3600,
-                    'oauth_authorization_expires_in': 3600,
-                }),
-                (('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
-                  '<person>\n'
-                  '  <id>{id}</id>\n'
-                  '  <email-address>{email}</email-address>\n'
-                  '  <first-name>{first_name}</first-name>\n'
-                  '  <last-name>{last_name}</last-name>\n'
-                  '</person>\n').format(**user)),
+                simplejson.dumps(user).replace('_name', 'Name'),
             ),
+
         }
 
         if backend not in backends:
@@ -138,7 +123,7 @@ class SocialClient(Client):
         else:
             request.session = engine.SessionStore()
 
-        request.user = AnonymousUser()
+        request.user = session_user or AnonymousUser()
         request.session['facebook_state'] = 'dummy'
 
         # make it happen.
@@ -158,4 +143,4 @@ class SocialClient(Client):
         }
         self.cookies[session_cookie].update(cookie_data)
 
-        return True
+        return request.user.is_authenticated(), redirect
