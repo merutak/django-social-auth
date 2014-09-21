@@ -6,6 +6,7 @@ from django.utils import simplejson
 from django.utils.importlib import import_module
 from mock import patch
 from social_auth.views import complete
+from social_auth.tests.fake_socials import fake_http
 
 class DumbResponse(object):
     """
@@ -37,6 +38,8 @@ class SocialClient(Client):
 
     @patch('social_auth.backends.facebook.FacebookAuth.enabled')
     @patch('social_auth.utils.urlopen')
+    @patch('requests.Session.get', new=fake_http)
+    @patch('requests.get', new=fake_http)
     def login(self, user, mock_urlopen, mock_facebook_enabled, backend='facebook', session_user=None):
         """
         Login or Register a facebook user.
