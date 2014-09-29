@@ -56,13 +56,13 @@ class FakeHttpResponse(object):
         self.status_code = status_code
         self.content = content
 
-locations = ['Georgetown, IL', 'Tel Aviv', 'Jerusalem', 'New York, New York', 'New Haven, MA']
-li_locations = [('Georgetown, IL', 'usa'), ('Jerusalem, Israel', 'il'), ('New York, New York', 'usa'), ('New Haven, MA', 'usa')]
-like_categories = ['Stuff A', 'Stuff B', 'Stuff C']
-like_names = [ 'Gays', 'Straights', 'Transes' ]
+locations = ['Georgetown, IL', 'Tel Aviv', 'Jerusalem', 'New York, New York', 'New Haven, MA', u'\u05de\u05d2\u05d3\u05dc \u05d4\u05e2\u05de\u05e7']
+li_locations = [('Georgetown, IL', 'usa'), ('Jerusalem, Israel', 'il'), ('New York, New York', 'usa'), ('New Haven, MA', 'usa'), (u'\u05de\u05d2\u05d3\u05dc \u05d4\u05e2\u05de\u05e7', 'il')]
+like_categories = ['Stuff A', 'Stuff B', 'Stuff C', u'\u05e2\u05e0\u05d9\u05d9\u05e0\u05d9\u05dd' ]
+like_names = [ 'Gays', 'Straights', 'Transes', u'\u05e2\u05dc\u05d9\u05d6\u05d5\u05ea' ]
 
-fake_companies = list(itertools.chain(* [ map(lambda x: '%s%03x'%(x,i,), ['Microsoft', 'Google', 'Samsung', 'Yahoo', 'Lenovo']) for i in range(5) ]))
-tickers = {'Microsoft000': 'MSFT', 'Google001': 'GOOG', 'Samsung002': 'SMSG', 'Yahoo003': 'YHOO', 'Lenovo004': 'LNVO',}
+fake_companies = list(itertools.chain(* [ map(lambda x: '%s%03x'%(x,i,), ['Microsoft', 'Google', 'Samsung', 'Yahoo', 'Lenovo', u'\u05d1\u05e0\u05e7', u'\u05db\u05d9"\u05dc']) for i in range(5) ]))
+tickers = {'Microsoft000': 'MSFT', 'Google001': 'GOOG', 'Samsung002': 'SMSG', 'Yahoo003': 'YHOO', 'Lenovo004': 'LNVO', u'\u05db\u05d9"\u05dc': 'KIL', }
 
 def fake_http(*args, **kwargs):
     import urllib
@@ -141,9 +141,9 @@ def random_linkedin_profile(fid, fields):
         if f == 'id':
             out[f] = fid
         elif f == 'first-name':
-            out[f] = 'Fn%s'%(fid,)
+            out[f] = 'Fn%s'%(fid,) if randbool() else u'\u05e9\u05dd%s'%(fid,)
         elif f == 'last-name':
-            out[f] = 'Ln%s'%(fid,)
+            out[f] = 'Ln%s'%(fid,) if randbool() else u'\u05e4\u05e9\u05dd%s'%(fid,)
         elif f == 'picture-url':
             out[f] = 'http://i.am.an.example.com/linkedin.jpg'
         elif f == 'educations':
@@ -151,7 +151,7 @@ def random_linkedin_profile(fid, fields):
             edus = out[f]['education']
             for i in range(random.randint(0, 5)):
                 edu = {}
-                edu['school-name'] = 'school%d'%(random.randint(0,10),)
+                edu['school-name'] = 'school%d'%(random.randint(0,10),) if random.randint(0,10)>0 else u'\u05d1\u05d9\u05ea \u05e1\u05e4\u05e8'
                 if randbool():
                     edu['id'] = random.randint(1,10000)
                 # TODO field-of-study, degree, activities, notes
@@ -172,13 +172,13 @@ def random_linkedin_profile(fid, fields):
                 pos = {}
                 for name in ('id', 'title', 'summary'):
                     if randbool():
-                        pos[name] = 'Position Title #%d'%(random.randint(0,1000))
+                        pos[name] = 'Position Title #%d'%(random.randint(0,1000)) if randbool() else u'\u05e1\u05d1\u05d0 \u05d5\u05e1\u05d1\u05ea\u05d0 #%d'%(random.randint(0,100))
                 if randbool():
                     pos['start-date'] = random_linkedin_date()
                 if randbool():
                     pos['end-date'] = random_linkedin_date()
                 pos['is-current'] = 'true' if randbool() else 'false'
-                pos['company'] = random_linkedin_company() if random.randint(0,3)==0 else None
+                pos['company'] = random_linkedin_company() if random.randint(0,40)>0 else None
                 poss.append(pos)
             li_decorate_length(out[f], 'position')
         elif f == 'location':
@@ -274,11 +274,11 @@ def random_facebook_profile(fid, fields):
         if f == 'id':
             out[f] = fid
         elif f == 'first_name':
-            out[f] = 'Fn%s'%(fid,)
+            out[f] = 'Fn%s'%(fid,) if randbool() else u'\u05e9\u05dd%s'%(fid,)
         elif f == 'last_name':
-            out[f] = 'Ln%s'%(fid,)
+            out[f] = 'Ln%s'%(fid,) if randbool() else u'\u05e9\u05dd %s'%(fid,)
         elif f == 'name':
-            out[f] = 'Fn%s U. Ln%s'%(fid, fid, )
+            out[f] = 'Fn%s U. Ln%s'%(fid, fid, ) if randbool() else u'\u05e1\u05d1\u05d0 \u05d5\u05e1\u05d1\u05ea\u05d0 %s'%(fid, )
         elif f.startswith('picture'):
             out['picture'] = {'data': {'url': 'http://i.am.an.example.com/bubu.jpg', 'is_silhoutte': randbool(), }, }
         elif f == 'education':
@@ -287,7 +287,7 @@ def random_facebook_profile(fid, fields):
                 edu['school'] = {}
                 if randbool():
                     edu['school']['id'] = 'school%d'%(random.randint(0,10))
-                edu['school']['name'] = 'school%d'%(random.randint(0,100))
+                edu['school']['name'] = 'school%d'%(random.randint(0,100)) if randbool() else u'\u05d1\u05d9\u05ea \u05e1\u05e4\u05e8 %s'%(random.randint(0,10))
                 if randbool():
                     edu['year'] = {'name': random.randint(1990,2020), }
                 out.setdefault(f, []).append(edu)
@@ -296,10 +296,10 @@ def random_facebook_profile(fid, fields):
                 pos = {}
                 pos['employer'] = random_facebook_company()
                 if randbool():
-                    pos['position'] = {'name': 'i am teh guy', }
-                if randbool():
+                    pos['position'] = {'name': 'i am teh guy' if randbool() else u'\u05e1\u05d1\u05d0 \u05d5\u05e1\u05d1\u05ea\u05d0', }
+                if random.randint(0, 10) > 0:
                     pos['start_date'] = rand_facebook_date()
-                if randbool():
+                if random.randint(0, 10) > 8:
                     pos['end_date'] = rand_facebook_date()
                 out.setdefault(f, []).append(pos)
         elif f in ('hometown', 'location'):
