@@ -19,7 +19,7 @@ from urlparse import parse_qsl
 from gzip import GzipFile
 from StringIO import StringIO
 
-from django.utils import simplejson
+import json
 from django.conf import settings
 
 from social_auth.utils import dsa_urlopen
@@ -99,7 +99,7 @@ class StackoverflowAuth(BaseOAuth2):
             response = opener.read()
 
         try:
-            data = simplejson.loads(response)
+            data = json.loads(response)
             return data.get('items')[0]
         except (ValueError, TypeError):
             return None

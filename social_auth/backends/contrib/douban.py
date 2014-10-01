@@ -11,7 +11,7 @@ class for details on how to extend it.
 """
 from urllib2 import Request
 
-from django.utils import simplejson
+import json
 
 from social_auth.utils import dsa_urlopen
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, BaseOAuth2
@@ -58,7 +58,7 @@ class DoubanAuth(ConsumerBasedOAuth):
         json = self.fetch_response(request)
 
         try:
-            return simplejson.loads(json)
+            return json.loads(json)
         except ValueError:
             return None
 
@@ -103,7 +103,7 @@ class DoubanAuth2(BaseOAuth2):
         headers = {'Authorization': 'Bearer %s' % access_token}
         request = Request(url, headers=headers)
         try:
-            return simplejson.loads(dsa_urlopen(request).read())
+            return json.loads(dsa_urlopen(request).read())
         except (ValueError, KeyError, IOError):
             return None
 

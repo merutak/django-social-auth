@@ -22,7 +22,7 @@ from hashlib import md5
 
 from django import forms
 from django.contrib.auth import authenticate
-from django.utils import simplejson
+import json
 
 from social_auth.backends import OAuthBackend, BaseOAuth2, BaseAuth, \
                                  SocialAuthBackend
@@ -131,7 +131,7 @@ def odnoklassniki_api(data, api_url, public_key, client_secret,
     params = urlencode(data)
     request = Request('{0}fb.do?{1}'.format(api_url, params))
     try:
-        return simplejson.loads(dsa_urlopen(request).read())
+        return json.loads(dsa_urlopen(request).read())
     except (TypeError, KeyError, IOError, ValueError, IndexError):
         log('error', 'Could not load data from Odnoklassniki.',
             exc_info=True, extra=dict(data=params))

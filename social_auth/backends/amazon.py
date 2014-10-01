@@ -2,7 +2,7 @@ import base64
 from urllib2 import Request, HTTPError
 from urllib import urlencode
 
-from django.utils import simplejson
+import json
 
 from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.utils import dsa_urlopen
@@ -60,7 +60,7 @@ class AmazonAuth(BaseOAuth2):
         url = 'https://www.amazon.com/ap/user/profile?access_token=%s' % \
                     access_token
         try:
-            response = simplejson.load(dsa_urlopen(Request(url)))
+            response = json.load(dsa_urlopen(Request(url)))
         except ValueError:
             return None
         except HTTPError:

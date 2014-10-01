@@ -14,7 +14,7 @@ field, check OAuthBackend class for details on how to extend it.
 """
 from urllib import urlencode
 
-from django.utils import simplejson
+import json
 
 from social_auth.utils import dsa_urlopen
 from social_auth.backends import BaseOAuth2, OAuthBackend
@@ -74,7 +74,7 @@ class SoundcloudAuth(BaseOAuth2):
             'oauth_token': access_token
         })
         try:
-            value = simplejson.load(dsa_urlopen(url))
+            value = json.load(dsa_urlopen(url))
             return value
         except ValueError:
             return None

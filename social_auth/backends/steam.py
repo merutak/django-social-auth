@@ -3,7 +3,7 @@ import re
 import urllib
 import urllib2
 
-from django.utils import simplejson
+import json
 
 from social_auth.backends import OpenIdAuth, OpenIDBackend
 from social_auth.exceptions import AuthFailed
@@ -28,7 +28,7 @@ class SteamBackend(OpenIDBackend):
                                             'steamids': user_id})
         details = {}
         try:
-            player = simplejson.load(urllib2.urlopen(url))
+            player = json.load(urllib2.urlopen(url))
         except (ValueError, IOError):
             pass
         else:

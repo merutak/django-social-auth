@@ -1,4 +1,4 @@
-from django.utils import simplejson
+import json
 from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.utils import dsa_urlopen, backend_setting
 from urllib import urlencode
@@ -62,7 +62,7 @@ class DisqusAuth(BaseOAuth2):
         }
         url = DISQUS_CHECK_AUTH + '?' + urlencode(params)
         try:
-            return simplejson.load(dsa_urlopen(url))
+            return json.load(dsa_urlopen(url))
         except ValueError:
             return None
 

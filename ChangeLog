@@ -1226,8 +1226,8 @@ ChangeLog
   * social_auth/backends/__init__.py, social_auth/backends/contrib/orkut.py,
   social_auth/backends/facebook.py, social_auth/backends/google.py,
   social_auth/backends/twitter.py: Use ValueError instad of JSONDecodeError to
-  support django.utils.simplejson utility properly on systems where
-  python-simplejson is not present
+  support django.utils.json utility properly on systems where
+  python-json is not present
 
 2011-04-15  Matías Aguirre <matiasaguirre@gmail.com>
 

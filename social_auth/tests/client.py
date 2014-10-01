@@ -2,7 +2,7 @@ import urllib
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.test.client import Client, RequestFactory
-from django.utils import simplejson
+import json
 from django.utils.importlib import import_module
 from mock import patch
 from social_auth.views import complete
@@ -83,24 +83,24 @@ class SocialClient(Client):
                     'access_token': token,
                     'expires': 3600,
                 }),
-                simplejson.dumps(user),
+                json.dumps(user),
             ),
 
             'google': (
-                simplejson.dumps({
+                json.dumps({
                     "access_token": token,
                     "token_type": "Bearer",
                     "expires_in": 3600,
                 }),
-                simplejson.dumps(user),
+                json.dumps(user),
             ),
 
             'linkedin-oauth2': (
-                simplejson.dumps({
+                json.dumps({
                     'access_token': token,
                     'expires': 3600,
                 }),
-                simplejson.dumps(user).replace('_name', 'Name'),
+                json.dumps(user).replace('_name', 'Name'),
             ),
 
         }

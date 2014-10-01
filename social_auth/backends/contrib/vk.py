@@ -7,7 +7,7 @@ Username is retrieved from the identity returned by server.
 """
 
 from django.contrib.auth import authenticate
-from django.utils import simplejson
+import json
 
 from urllib import urlencode
 from hashlib import md5
@@ -290,7 +290,7 @@ def vk_api(method, data, is_app=False):
     params = urlencode(data)
     url += '?' + params
     try:
-        return simplejson.load(dsa_urlopen(url))
+        return json.load(dsa_urlopen(url))
     except (TypeError, KeyError, IOError, ValueError, IndexError):
         log('error', 'Could not load data from vk.com',
             exc_info=True, extra=dict(data=data))

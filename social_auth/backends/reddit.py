@@ -2,7 +2,7 @@ import base64
 from urllib2 import Request, HTTPError
 from urllib import urlencode
 
-from django.utils import simplejson
+import json
 
 from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.utils import dsa_urlopen
@@ -56,7 +56,7 @@ class RedditAuth(BaseOAuth2):
                 'https://oauth.reddit.com/api/v1/me.json',
                 headers={'Authorization': 'bearer %s' % access_token}
             )
-            return simplejson.load(dsa_urlopen(request))
+            return json.load(dsa_urlopen(request))
         except ValueError:
             return None
         except HTTPError:

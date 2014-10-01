@@ -13,7 +13,7 @@ class for details on how to extend it.
 """
 from urllib2 import HTTPError
 
-from django.utils import simplejson
+import json
 
 from social_auth.utils import dsa_urlopen
 from social_auth.backends import BaseOAuth2
@@ -59,7 +59,7 @@ class DailymotionAuth(BaseOAuth2):
         """Return user data provided"""
         try:
             data = dsa_urlopen(DAILYMOTION_CHECK_AUTH + access_token).read()
-            return simplejson.loads(data)
+            return json.loads(data)
         except (ValueError, HTTPError):
             return None
 

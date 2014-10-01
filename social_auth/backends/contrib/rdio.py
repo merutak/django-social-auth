@@ -2,7 +2,7 @@ import urllib
 
 from oauth2 import Request as OAuthRequest, SignatureMethod_HMAC_SHA1
 
-from django.utils import simplejson
+import json
 
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, BaseOAuth2
 from social_auth.utils import dsa_urlopen
@@ -74,7 +74,7 @@ class RdioOAuth1(ConsumerBasedOAuth):
         response = dsa_urlopen(request.url, request.to_postdata())
         json = '\n'.join(response.readlines())
         try:
-            return simplejson.loads(json)['result']
+            return json.loads(json)['result']
         except ValueError:
             return None
 
@@ -109,7 +109,7 @@ class RdioOAuth2(BaseOAuth2):
         }
         response = dsa_urlopen(self.RDIO_API_BASE, urllib.urlencode(params))
         try:
-            return simplejson.load(response)['result']
+            return json.load(response)['result']
         except ValueError:
             return None
 

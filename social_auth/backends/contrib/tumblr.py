@@ -16,7 +16,7 @@ from urllib import urlopen
 from oauth2 import Request as OAuthRequest, Token as OAuthToken, \
                    SignatureMethod_HMAC_SHA1
 
-from django.utils import simplejson
+import json
 
 from social_auth.backends import ConsumerBasedOAuth
 from social_auth.backends import OAuthBackend
@@ -76,7 +76,7 @@ class TumblrAuth(ConsumerBasedOAuth):
         json = self.fetch_response(request)
 
         try:
-            return simplejson.loads(json)
+            return json.loads(json)
         except ValueError:
             return None
 

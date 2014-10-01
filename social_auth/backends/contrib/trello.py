@@ -13,7 +13,7 @@ TRELLO_AUTH_EXTRA_ARGUMENTS = {
 into settings.py
 """
 
-from django.utils import simplejson
+import json
 
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
 from social_auth.utils import dsa_urlopen, backend_setting
@@ -89,7 +89,7 @@ class TrelloAuth(ConsumerBasedOAuth):
         }
         url = TRELLO_USER_DETAILS_URL + '?' + urlencode(params)
         try:
-            return simplejson.load(dsa_urlopen(url))
+            return json.load(dsa_urlopen(url))
         except ValueError:
             return None
 

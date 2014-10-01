@@ -5,7 +5,7 @@ No extra configurations are needed to make this work.
 """
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
 
-from django.utils import simplejson
+import json
 
 MENDELEY_SERVER = 'mendeley.com'
 MENDELEY_REQUEST_TOKEN_URL = 'http://api.%s/oauth/request_token/' % \
@@ -53,7 +53,7 @@ class MendeleyAuth(ConsumerBasedOAuth):
         """Return user data provided"""
         url = MENDELEY_CHECK_AUTH + 'me/'
         request = self.oauth_request(access_token, url)
-        data = simplejson.loads(self.fetch_response(request))
+        data = json.loads(self.fetch_response(request))
         data.update(data['main'])
         return data
 

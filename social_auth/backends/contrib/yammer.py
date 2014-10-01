@@ -5,7 +5,7 @@ import logging
 from urllib import urlencode
 from urlparse import parse_qs
 
-from django.utils import simplejson
+import json
 from django.utils.datastructures import MergeDict
 
 from social_auth.backends import BaseOAuth2, OAuthBackend
@@ -67,7 +67,7 @@ class YammerOAuth2(BaseOAuth2):
         url = '%s?%s' % (self.ACCESS_TOKEN_URL, urlencode(params))
 
         try:
-            return simplejson.load(dsa_urlopen(url))
+            return json.load(dsa_urlopen(url))
         except Exception, e:
             logging.exception(e)
         return None

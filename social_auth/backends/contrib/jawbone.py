@@ -1,6 +1,6 @@
 from urllib2 import Request, urlopen
 
-from django.utils import simplejson
+import json
 
 from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.exceptions import AuthCanceled, AuthUnknownError
@@ -56,7 +56,7 @@ class JawboneAuth(BaseOAuth2):
         headers = {'Authorization': 'Bearer ' + access_token}
         request = Request(url, headers=headers)
         try:
-            return simplejson.load(urlopen(request))
+            return json.load(urlopen(request))
         except ValueError:
             return None
 

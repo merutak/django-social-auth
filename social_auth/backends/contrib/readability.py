@@ -6,7 +6,7 @@ READABILITY_CONSUMER_KEY and READABILITY_CONSUMER_SECRET must be defined with
 the values given by Readability in the Connections page of your account
 settings."""
 
-from django.utils import simplejson
+import json
 
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
 from social_auth.exceptions import AuthCanceled
@@ -77,7 +77,7 @@ class ReadabilityAuth(ConsumerBasedOAuth):
         request = self.oauth_request(access_token, url)
         json = self.fetch_response(request)
         try:
-            return simplejson.loads(json)
+            return json.loads(json)
         except ValueError:
             return None
 

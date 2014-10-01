@@ -1,5 +1,5 @@
 from urllib import urlencode
-from django.utils import simplejson
+import json
 
 from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.utils import dsa_urlopen
@@ -50,7 +50,7 @@ class StocktwitsAuth(BaseOAuth2):
         params = {'access_token': access_token}
         url = STOCKTWITS_CHECK_AUTH + '?' + urlencode(params)
         try:
-            return simplejson.load(dsa_urlopen(url))
+            return json.load(dsa_urlopen(url))
         except ValueError:
             return None
 

@@ -8,7 +8,7 @@ from oauth2 import Token
 
 from urllib import urlencode
 
-from django.utils import simplejson
+import json
 
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
 from social_auth.exceptions import AuthCanceled, AuthUnknownError
@@ -59,7 +59,7 @@ class XingAuth(ConsumerBasedOAuth):
         consumer = oauth.Consumer(key=key, secret=secret)
         client = oauth.Client(consumer, access_token)
         resp, content = client.request(XING_CHECK_AUTH, 'GET')
-        profile = simplejson.loads(content)['users'][0]
+        profile = json.loads(content)['users'][0]
 
         try:
             return {
