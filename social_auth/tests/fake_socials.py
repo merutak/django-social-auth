@@ -187,6 +187,9 @@ def random_linkedin_profile(fid, fields):
             out[f] = {'name': locations[loc_i], 'country': {'code': country_code, } }
         elif f in ('headline', 'industry'):
             pass # TBD
+        elif f == 'public-profile-url':
+            if randbool():
+                out[f] = 'http://www.linkedin.com/i/have/some/profile-name/%s'%(fid, )
         else:
             raise Exception('Unrecognized social field: %s'%(f, ))
     return out
