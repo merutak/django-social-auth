@@ -18,6 +18,8 @@ def dsa_view(redirect_name=None):
     def dec(func):
         @wraps(func)
         def wrapper(request, backend, *args, **kwargs):
+            if backend == 'generic':
+                backend = request.POST['backend'] if request.method == 'POST' else request.GET['backend']
             if redirect_name:
                 redirect = reverse(redirect_name, args=(backend,))
             else:
