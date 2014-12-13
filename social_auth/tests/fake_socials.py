@@ -60,7 +60,7 @@ locations = ['Georgetown, IL', 'Tel Aviv', 'Jerusalem', 'New York, New York', 'N
 li_locations = [('Georgetown, IL', 'usa'), ('Jerusalem, Israel', 'il'), ('New York, New York', 'usa'), ('New Haven, MA', 'usa'), (u'\u05de\u05d2\u05d3\u05dc \u05d4\u05e2\u05de\u05e7', 'il')]
 like_categories = ['Stuff A', 'Stuff B', 'Stuff C', u'\u05e2\u05e0\u05d9\u05d9\u05e0\u05d9\u05dd' ]
 like_names = [ 'Gays', 'Straights', 'Transes', u'\u05e2\u05dc\u05d9\u05d6\u05d5\u05ea' ]
-
+tag_repo = ['Java', 'C', 'C++', 'Big Data', 'Small Data', 'Medium-Sized Data', 'Matlab', 'Physics']
 fake_companies = list(itertools.chain(* [ map(lambda x: '%s%03x'%(x,i,), ['Microsoft', 'Google', 'Samsung', 'Yahoo', 'Lenovo', u'\u05d1\u05e0\u05e7', u'\u05db\u05d9"\u05dc']) for i in range(5) ]))
 tickers = {'Microsoft000': 'MSFT', 'Google001': 'GOOG', 'Samsung002': 'SMSG', 'Yahoo003': 'YHOO', 'Lenovo004': 'LNVO', u'\u05db\u05d9"\u05dc': 'KIL', }
 
@@ -190,6 +190,16 @@ def random_linkedin_profile(fid, fields):
         elif f == 'public-profile-url':
             if randbool():
                 out[f] = 'http://www.linkedin.com/i/have/some/profile-name/%s'%(fid, )
+        elif f == 'skills':
+            num_tags = random.randint(0,10)
+            if num_tags > 0:
+                out[f] = {'skill': []}
+                for i in range(random.randint(0,10)):
+                    tagid = random.randint(0, len(tag_repo)-1)
+                    out[f]['skill'].append({'id': tagid,
+                                            'skill': {'name': tag_repo[tagid], },
+                                            })
+                li_decorate_length(out[f], 'skill')
         else:
             raise Exception('Unrecognized social field: %s'%(f, ))
     return out
@@ -216,7 +226,7 @@ def fake_linkedin(*args, **kwargs):
         with make_social_profile_non_private('1234'):
             ret = {'person': random_linkedin_profile('1234', fields)}
     elif url.path == '/v1/people/~/connections':
-        ret = {'connections': { 'person': [ random_linkedin_profile(fid, fields) for fid in friend_facebook_ids ]}}
+        ret = {'connections': { 'person': [ random_linkedin_profile(fid, fields.difference('skills')) for fid in friend_facebook_ids ]}}
         li_decorate_length(ret['connections'], 'person')
     elif url.path == '/v1/company-search':
         ret = {'company-search': {'companies': {'company': []}}}
