@@ -252,8 +252,8 @@ def init_fake_facebook(friendship_pairs):
     [ facebook_fofs.setdefault(unicode(a), set()).add(unicode(b)) for a,b in friendship_pairs ]
     [ facebook_fofs.setdefault(unicode(a), set()).add(unicode(b)) for b,a in friendship_pairs ]
 
-def rand_facebook_date():
-    if randbool():
+def rand_facebook_date(null_probability=0.1):
+    if random.random() < null_probability:
         return '0000-00'
     else:
         return '%4d-%02d-%02d'%(random.randint(1990,2020), random.randint(1,12), random.randint(1,28))
@@ -311,9 +311,9 @@ def random_facebook_profile(fid, fields):
                 if randbool():
                     pos['position'] = {'name': 'i am teh guy' if randbool() else u'\u05e1\u05d1\u05d0 \u05d5\u05e1\u05d1\u05ea\u05d0', }
                 if random.randint(0, 10) > 0:
-                    pos['start_date'] = rand_facebook_date()
+                    pos['start_date'] = rand_facebook_date(0.3)
                 if random.randint(0, 10) > 8:
-                    pos['end_date'] = rand_facebook_date()
+                    pos['end_date'] = rand_facebook_date(0.1)
                 out.setdefault(f, []).append(pos)
         elif f in ('hometown', 'location'):
             if randbool():
