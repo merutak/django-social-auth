@@ -601,7 +601,11 @@ class BaseOAuth(BaseAuth):
         """Return list with needed access scope"""
         scope = self.DEFAULT_SCOPE or []
         if self.SCOPE_VAR_NAME:
-            scope = scope + setting(self.SCOPE_VAR_NAME, [])
+            data = self.request.GET if self.request.method == 'GET' else self.request.POST
+            if self.SCOPE_VAR_NAME in data:
+                scope = filter(None, data[self.SCOPE_VAR_NAME].split(','))
+            else:
+                scope = scope + setting(self.SCOPE_VAR_NAME, [])
         return scope
 
     def get_scope_argument(self):
