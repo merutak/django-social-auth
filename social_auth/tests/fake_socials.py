@@ -302,7 +302,7 @@ def random_facebook_profile(fid, fields):
                     edu['school']['id'] = 'school%d'%(random.randint(0,10))
                 edu['school']['name'] = 'school%d'%(random.randint(0,100)) if randbool() else u'\u05d1\u05d9\u05ea \u05e1\u05e4\u05e8 %s'%(random.randint(0,10))
                 if randbool():
-                    edu['year'] = {'name': random.randint(1990,2020), }
+                    edu['year'] = random.randint(1990,2020)
                 out.setdefault(f, []).append(edu)
         elif f == 'work':
             for i in range(random.randint(0, 5)):
