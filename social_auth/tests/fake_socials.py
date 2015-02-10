@@ -63,6 +63,7 @@ like_names = [ 'Gays', 'Straights', 'Transes', u'\u05e2\u05dc\u05d9\u05d6\u05d5\
 tag_repo = ['Java', 'C', 'C++', 'Big Data', 'Small Data', 'Medium-Sized Data', 'Matlab', 'Physics']
 fake_companies = list(itertools.chain(* [ map(lambda x: '%s%03x'%(x,i,), ['Microsoft', 'Google', 'Samsung', 'Yahoo', 'Lenovo', u'\u05d1\u05e0\u05e7', u'\u05db\u05d9"\u05dc']) for i in range(5) ]))
 tickers = {'Microsoft000': 'MSFT', 'Google001': 'GOOG', 'Samsung002': 'SMSG', 'Yahoo003': 'YHOO', 'Lenovo004': 'LNVO', u'\u05db\u05d9"\u05dc': 'KIL', }
+industries = ['Software', 'Hardware', 'Prostitution', 'Gambling', 'Weaponry', 'Publishing']
 
 def fake_http(*args, **kwargs):
     import urllib
@@ -120,14 +121,34 @@ def random_linkedin_date():
             ret['day'] = random.randint(1,28)
     return ret
 
+def linkedin_annotate_company(ret):
+    if randbool():
+        ret['website-url'] = '%swww.example.com'%('http://' if randbool() else '')
+    if randbool():
+        ret['logo-url'] = '%swww.example.com/logo.jpg'%('http://' if randbool() else '')
+    num_industries = random.randint(0, 3)
+    if num_industries > 0:
+        ret['industries'] = {'industry': []}
+        inds = ret['industries']['industry']
+        for ind in random.sample(range(len(industries)), num_industries):
+            inds.append({
+                            'name': industries[ind],
+                            'code': ind+1,
+                        })
+        li_decorate_length(ret['industries'], 'industry')
+
+def linkedin_company_by_id(lid):
+    ret = {
+        'id': lid,
+        'name': fake_companies[int(lid.replace('ZLI', '').replace('LI', ''), 16)],
+    }
+    linkedin_annotate_company(ret)
+    return ret
+
 def random_linkedin_company(with_urls=False):
     ret = random_company(linkedin_company_id)
     if with_urls:
-        if randbool():
-            ret['website-url'] = '%swww.example.com'%('http://' if randbool() else '')
-        if randbool():
-            ret['logo-url'] = '%swww.example.com/logo.jpg'%('http://' if randbool() else '')
-    # TODO industries
+        linkedin_annotate_company(ret)
     return ret
 
 def random_linkedin_profile(fid, fields):
@@ -236,6 +257,9 @@ def fake_linkedin(*args, **kwargs):
             comp = random_linkedin_company(with_urls=True)
             ret['company-search']['companies']['company'].append(comp)
         li_decorate_length(ret['company-search']['companies'], 'company')
+    elif url.path.startswith('/v1/companies/'):
+        lid = re.search('/v1/companies/(\w+)$', url.path).group(1)
+        ret = {'company': linkedin_company_by_id(lid), }
     else:
         raise Exception('Unrecognized linkedin URL: %s'%(url.path))
     logger.debug('fake linkedin returning: %s'%(unicode(ret)[:50],))
