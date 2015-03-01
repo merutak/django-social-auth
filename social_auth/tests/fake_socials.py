@@ -226,6 +226,8 @@ def fake_linkedin(*args, **kwargs):
         with make_social_profile_non_private('1234'):
             ret = {'person': random_linkedin_profile('1234', fields)}
     elif url.path == '/v1/people/~/connections':
+        if 'public-profile-url' in fields:
+            return FakeHttpResponse(status_code=500, content="you may not ask for public-profile-url of friends")
         ret = {'connections': { 'person': [ random_linkedin_profile(fid, fields.difference('skills')) for fid in friend_facebook_ids ]}}
         li_decorate_length(ret['connections'], 'person')
     elif url.path == '/v1/company-search':
