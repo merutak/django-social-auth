@@ -73,9 +73,9 @@ class TwitterAuth(ConsumerBasedOAuth):
     def user_data(self, access_token, *args, **kwargs):
         """Return user data provided"""
         request = self.oauth_request(access_token, TWITTER_CHECK_AUTH)
-        json = self.fetch_response(request)
+        jsonresp = self.fetch_response(request)
         try:
-            return json.loads(json)
+            return json.loads(jsonresp)
         except ValueError:
             return None
 
