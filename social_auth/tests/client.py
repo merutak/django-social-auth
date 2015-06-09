@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.test.client import Client, RequestFactory
 import json
-from django.utils.importlib import import_module
+from importlib import import_module
 from mock import patch
 from social_auth.views import complete
 from social_auth.tests.fake_socials import fake_http

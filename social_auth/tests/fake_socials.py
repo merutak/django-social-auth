@@ -1,5 +1,6 @@
 from collections import Counter
 import random
+import requests
 import urlparse
 import urllib
 import json
@@ -67,15 +68,21 @@ industries = ['Software', 'Hardware', 'Prostitution', 'Gambling', 'Weaponry', 'P
 
 def fake_http(*args, **kwargs):
     import urllib
-    url = kwargs['url']
-    assert url is not None
-    url = urlparse.urlparse(url)
-    if url.path.endswith('jpg'):
+    if args and isinstance(args[0], requests.Session):
+        args = list(args[1:])
+    if 'url' in kwargs:
+        url = kwargs.pop('url')
+    else:
+        url = args[0]
+        args = args[1:]
+    assert isinstance(url, basestring), "Wanted a URL, got %s (%s) instead" % (url, type(url), )
+    parsedurl = urlparse.urlparse(url)
+    if parsedurl.path.endswith('jpg'):
         return FakeHttpResponse(status_code=200, content='abc')
-    if 'linkedin' in url.netloc:
-        return fake_linkedin(*args, **kwargs)
-    if 'facebook' in url.netloc:
-        return fake_facebook(*args, **kwargs)
+    if 'linkedin' in parsedurl.netloc:
+        return fake_linkedin(url, *args, **kwargs)
+    if 'facebook' in parsedurl.netloc:
+        return fake_facebook(url, *args, **kwargs)
     assert False
 
 def random_company(id_maker):
@@ -227,9 +234,8 @@ def random_linkedin_profile(fid, fields):
 
 fields_pat = re.compile(r'(https?://[^:]+):\(([-:()a-z,]+)\)(.*)')
 
-def fake_linkedin(*args, **kwargs):
+def fake_linkedin(url, *args, **kwargs):
     import xmltodict
-    url = kwargs.pop('url')
     params = kwargs.pop('params', {})
     if expired_auths['LI']:
         return FakeHttpResponse(status_code=401, content='joo have been expired')
@@ -360,12 +366,12 @@ def fake_facebook__times_fof_called():
     return times_fofs_called
 
 fql_pat = re.compile(r'uid2 in \((.*)\)')
-def fake_facebook(*args, **kwargs):
+def fake_facebook(url, *args, **kwargs):
     global times_fofs_called
     global facebook_fofs
     if expired_auths['FB']:
         return FakeHttpResponse(status_code=400, content=json.dumps({'error': {'message': 'joo have been expired'}}))
-    url = urlparse.urlparse(kwargs['url'])
+    url = urlparse.urlparse(url)
     query = dict(urlparse.parse_qsl(url.query + urllib.urlencode(kwargs.pop('params', {}))))
     fields = set(query.get('fields', 'id').split(','))
     fields.add('id')
