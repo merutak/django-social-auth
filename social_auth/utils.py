@@ -108,11 +108,11 @@ def sanitize_redirect(host, redirect_to):
 
     # Heavier security check, don't allow redirection to a different host.
     try:
-        netloc = urlparse.urlparse(redirect_to)[1]
+        netloc = urlparse.urlparse(redirect_to).hostname
     except TypeError:  # not valid redirect_to value
         return None
 
-    if netloc and netloc != host:
+    if netloc and netloc != host.split(':')[0]:
         return None
 
     return redirect_to
