@@ -110,9 +110,11 @@ def sanitize_redirect(host, redirect_to):
     try:
         netloc = urlparse.urlparse(redirect_to).hostname
     except TypeError:  # not valid redirect_to value
+        logger.exception("preventing redirect to curious URL %s", redirect_to)
         return None
 
     if netloc and netloc != host.split(':')[0]:
+        logger.error("preventing redirect to URL %s not matching %s", redirect_to, host)
         return None
 
     return redirect_to
